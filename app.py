@@ -1,7 +1,7 @@
 import streamlit as st
 import numpy as np
 import tensorflow as tf
-import cv2
+from PIL import Image
 from tensorflow import keras
 
 # Load Model
@@ -18,12 +18,11 @@ st.title("🛣️ DeepCrack Detection App")
 uploaded_file = st.file_uploader("Upload a road image", type=["jpg", "png", "jpeg"])
 
 if uploaded_file is not None:
-    # Read Image
-    file_bytes = np.asarray(bytearray(uploaded_file.read()), dtype=np.uint8)
-    img = cv2.imdecode(file_bytes, 1)
-    img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-    img_resized = cv2.resize(img_rgb, (256, 256)) / 255.0
-    input_tensor = np.expand_dims(img_resized, axis=0)
+    # Read Image using PIL
+    img = Image.open(uploaded_file).convert("RGB")
+    img = img.resize((256, 256))
+    img_array = np.array(img) / 255.0
+    input_tensor = np.expand_dims(img_array, axis=0)
 
     # Predict
     pred = model.predict(input_tensor)[0].squeeze()
@@ -32,7 +31,7 @@ if uploaded_file is not None:
     # Crack stats
     cracked_pixels = np.sum(pred_mask > 0)
     total_pixels = pred_mask.shape[0] * pred_mask.shape[1]
-    crack_percent = (cracked_pixels / total_pixels) * 100
+
 
     if crack_percent > 3:
         action = "⚠️ Immediate Repair Needed"

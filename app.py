@@ -4,8 +4,7 @@ import tensorflow as tf
 from PIL import Image
 from tensorflow import keras
 
-# Load Model
-@st.cache(allow_output_mutation=True)
+@st.cache_resource
 def load_model():
     return keras.models.load_model("deepcrack_vgg16_unet.h5", compile=False)
 

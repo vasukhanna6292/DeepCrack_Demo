@@ -9,7 +9,7 @@ import tempfile
 # 🔥 Updated model loading with HuggingFace link
 @st.cache_resource
 def load_tflite_model():
-    model_url = "https://huggingface.co/Vasu10khanna/deepcrack-model/resolve/main/deepcrack_vgg16_unet.tflite"
+    model_url = "https://huggingface.co/Vasu10khanna/deepcrack-model/resolve/main/deepcrack_vgg16_unet.h5"
     r = requests.get(model_url)
     with tempfile.NamedTemporaryFile(delete=False, suffix=".tflite") as temp_file:
         temp_file.write(r.content)

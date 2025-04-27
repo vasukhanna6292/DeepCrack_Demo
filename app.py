@@ -9,24 +9,23 @@ import os
 
 
 # Download model from Google Drive link if not already downloaded
-@st.cache_data
-def download_model():
-    model_url = "https://drive.google.com/uc?id=1lSMp_sLqm0piZB4szmz99s9lbm0ol2Wz"  # your direct download link
-    output_model_path = "deepcrack_vgg16_unet.h5"
-    
-    if not os.path.exists(output_model_path):
-        with st.spinner('Downloading model... please wait ⏳'):
-            r = requests.get(model_url, allow_redirects=True)
-            open(output_model_path, 'wb').write(r.content)
-    return output_model_path
 
-# Load model after downloading
+import tempfile
+
+
+# 🔥 Updated model loading with HuggingFace link
 @st.cache_resource
 def load_model():
-    model_path = download_model()
-    return keras.models.load_model(model_path, compile=False)
+    model_url = "https://huggingface.co/Vasu10khanna/deepcrack-model/resolve/main/deepcrack_vgg16_unet.h5"
+    r = requests.get(model_url)
+    with tempfile.NamedTemporaryFile(delete=False, suffix=".h5") as temp_file:
+        temp_file.write(r.content)
+        temp_file.flush()
+        model = keras.models.load_model(temp_file.name, compile=False)
+    return model
 
 model = load_model()
+
 
 # Title
 st.title("🛣️ DeepCrack Detection App")
